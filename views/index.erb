@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geocoin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #left-panel { float: left; width: 30%; height: 100% }
+      #map-canvas { float: left; width: 70%; height: 100% }
+      #results a { display: block; clear: both; }
+      #results a .left { float: left; width: 40%; }
+      #results a .right { float: left; width: 60%; }
+    </style>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <% if @api_key %>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?region=FR&key=<%= @api_key %>"></script>
+    <script type="text/javascript">
+      var center = "<%= @region %>";
+      var pins = <%= JSON.generate(@location_map) %>;
+    </script>
+    <script type="text/javascript" src="script.js"></script>
+    <% end %>
+  </head>
+  <body>
+    <div id="left-panel">
+      <div id="search">
+        <form method="post">
+          <input type="text" name="k" value="<%= @api_key %>" placeholder="api-key" />
+          <input type="text" name="u" value="<%= @url_prefix %>" placeholder="url" />
+          <input type="text" name="p" value="<%= @page_count %>" placeholder="pages" />
+          <input type="text" name="r" value="<%= @region %>" placeholder="centrage" />
+          <input type="submit" value="Afficher sur la carte." />
+        </form>
+      </div>
+      <div id="results"></div>
+    </div>
+    <div id="map-canvas"/>
+  </body>
+</html>

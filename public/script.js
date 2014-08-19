@@ -1,11 +1,4 @@
-var map;
-var geocoder;
-
-// This lines are filled by the fetchlocation.rb script
-var center = 'REPLACE_ME';
-var pins = {'replace': 'me'};
-
-var markers = [];
+var map, geocoder, markers = [];
 
 function cacheStore(address, latLng) {
   var latLngCode = latLng !== null ? ('' + latLng.lat() + '|' + latLng.lng()) : null;
