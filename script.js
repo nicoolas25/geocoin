@@ -39,9 +39,26 @@ function withPositionFor(address, callback) {
   }
 }
 
-function contentStringFor(location) {
-  var firstLink = pins[location][0];
-  return "<iframe width='1024' height='600' src='" + firstLink +"'></iframe>";
+function fillResultsWith(offers) {
+  $('#results').html('');
+  var buffer = '';
+  for (var offer in offers) {
+    offer = offers[offer]
+
+    buffer += '<a class="offer" href="' + offer.url + '" target="_blank">';
+    buffer += '<div class="left">';
+    buffer += '<div class="image">';
+    if (offer.img) buffer += '<img src="' + offer.img + '">';
+    buffer += '</div>';
+    buffer += '</div>';
+    buffer += '<div class="right">';
+    buffer += '<div class="label">' + offer.label + '</div>';
+    buffer += '<div class="price">' + offer.price + '</div>';
+    buffer += '<div class="date">' + offer.date + '</div>';
+    buffer += '</div>';
+    buffer += '</a>';
+  }
+  $('#results').html(buffer);
 }
 
 function insertMarkers() {
@@ -49,24 +66,17 @@ function insertMarkers() {
   for (var location in pins) {
     if (pins.hasOwnProperty(location)) {
       i = i + 1000;
-      (function(location, links, delay) {
+      (function(location, offers, delay) {
         setTimeout(function() {
           withPositionFor(location, function(latLng) {
-            // var infowindow = new google.maps.InfoWindow({
-            //   content: contentStringFor(closureLocation),
-            //   maxWidth: 1200,
-            // });
-
             var marker = new google.maps.Marker({
               position: latLng,
               map: map,
-              title: 'Résulat (' + links.length + ') pour : ' + location,
+              title: 'Résulat (' + offers.length + ') pour : ' + location,
             });
 
             google.maps.event.addListener(marker, 'click', function() {
-              //infowindow.open(map,marker);
-              var url = links[0];
-              window.open(url, '_blank');
+              fillResultsWith(offers);
             });
 
             markers.push(marker);

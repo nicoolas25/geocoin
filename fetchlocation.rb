@@ -18,10 +18,18 @@ page_count.times do |i|
   url = url_prefix + "&o=#{i + 1}"
   doc = Nokogiri::HTML(open(url))
   doc.css('.list-lbc > a').each do |item|
+    offer = {
+      url:   item.attr('href'),
+      price: item.css('.price').first.content.strip,
+      label: item.css('.title').first.content.strip,
+      date:  item.css('.date div').map{ |item| item.content.strip }.join(' '),
+      img:   ((image = item.css('.image img').first) && image.attr('src')),
+    }
+
+    # Add the offer to the location
     location = item.css('.placement').first.content
     location = location.split('/').map(&:strip).join(', ')
-    link     = item.attr('href')
-    (location_map[location] ||= []) << link
+    (location_map[location] ||= []) << offer
   end
 end
 
