@@ -13,22 +13,35 @@ function cacheLookup(address) {
   return new google.maps.LatLng(parseFloat(latLng[0]), parseFloat(latLng[1]));
 }
 
-function withPositionFor(address, callback) {
-  var result = cacheLookup(address);
+function withPositionFor(address, coordinates, callback) {
+  var result;
+  if (coordinates) {
+    console.log("Lat/Lng provided", address);
+    result = new google.maps.LatLng(coordinates[0], coordinates[1]);
+  } else {
+    console.log("Lat/Lng not provided", address);
+    result = cacheLookup(address);
+  }
+
   if (result === null) {
+    console.log("Google Map search", address);
     geocoder.geocode({ address: address }, function(geocoderResults, error) {
+      console.log("Results", geocoderResults);
+      console.log("Error", error);
       if (geocoderResults != null) {
         var firstResult = geocoderResults[0];
         var latLng = firstResult.geometry.location;
         cacheStore(address, latLng);
         callback(latLng)
       } else {
+        console.log("Not found", address, error);
         cacheStore(address, false);
-        console.log("not found", address, error);
       }
     });
   } else if (result !== false) {
     callback(result);
+  } else {
+    console.log("Unexpected result", result);
   }
 }
 
@@ -58,10 +71,12 @@ function insertMarkers() {
   var i = 0;
   for (var location in pins) {
     if (pins.hasOwnProperty(location)) {
-      i = i + 1000;
+      i = i + 500;
       (function(location, offers, delay) {
         setTimeout(function() {
-          withPositionFor(location, function(latLng) {
+          var coordinates = null, offer = offers[0];
+          if (offer.lat && offer.lng) { coordinates = [offer.lat, offer.lng]; }
+          withPositionFor(location, coordinates, function(latLng) {
             var marker = new google.maps.Marker({
               position: latLng,
               map: map,
@@ -83,7 +98,7 @@ function insertMarkers() {
 
 $(function(){
   geocoder = new google.maps.Geocoder();
-  withPositionFor(center, function(latLng) {
+  withPositionFor(center, null, function(latLng) {
     var options = { zoom: 8, center: latLng }
     map = new google.maps.Map(document.getElementById("map-canvas"), options);
     insertMarkers();
