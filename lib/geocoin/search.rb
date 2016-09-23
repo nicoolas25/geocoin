@@ -32,7 +32,7 @@ module Geocoin
         results << {
           url: li.attr("href"),
           label: li.css(TITLE_SEL).first.content.strip,
-          price: li.css(PRICE_SEL).first.content.strip,
+          price: (price = li.css(PRICE_SEL).first) ? price.content.strip : "",
           date: li.xpath(DATE_XSEL).last.content.strip,
           city: li.xpath(CITY_XSEL).first.content.split("/").map(&:strip),
           img: (img = li.css(IMG_SEL).first) ? img.attr("data-imgsrc") : DEFAULT_IMG,
